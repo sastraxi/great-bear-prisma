@@ -1,0 +1,10 @@
+mutation {
+
+  item1: createItem(data: {
+    name: 'Moo shu pork',
+
+  }) {
+    id
+  }
+
+}
