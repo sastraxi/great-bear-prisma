@@ -62,6 +62,7 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CartConnectionPromise;
+  cartItem: (where: CartItemWhereUniqueInput) => CartItemNullablePromise;
   cartItems: (args?: {
     where?: CartItemWhereInput;
     orderBy?: CartItemOrderByInput;
@@ -118,6 +119,7 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => OrderConnectionPromise;
+  orderItem: (where: OrderItemWhereUniqueInput) => OrderItemNullablePromise;
   orderItems: (args?: {
     where?: OrderItemWhereInput;
     orderBy?: OrderItemOrderByInput;
@@ -178,10 +180,20 @@ export interface Prisma {
   deleteCart: (where: CartWhereUniqueInput) => CartPromise;
   deleteManyCarts: (where?: CartWhereInput) => BatchPayloadPromise;
   createCartItem: (data: CartItemCreateInput) => CartItemPromise;
+  updateCartItem: (args: {
+    data: CartItemUpdateInput;
+    where: CartItemWhereUniqueInput;
+  }) => CartItemPromise;
   updateManyCartItems: (args: {
     data: CartItemUpdateManyMutationInput;
     where?: CartItemWhereInput;
   }) => BatchPayloadPromise;
+  upsertCartItem: (args: {
+    where: CartItemWhereUniqueInput;
+    create: CartItemCreateInput;
+    update: CartItemUpdateInput;
+  }) => CartItemPromise;
+  deleteCartItem: (where: CartItemWhereUniqueInput) => CartItemPromise;
   deleteManyCartItems: (where?: CartItemWhereInput) => BatchPayloadPromise;
   createItem: (data: ItemCreateInput) => ItemPromise;
   updateItem: (args: {
@@ -216,10 +228,20 @@ export interface Prisma {
   deleteOrder: (where: OrderWhereUniqueInput) => OrderPromise;
   deleteManyOrders: (where?: OrderWhereInput) => BatchPayloadPromise;
   createOrderItem: (data: OrderItemCreateInput) => OrderItemPromise;
+  updateOrderItem: (args: {
+    data: OrderItemUpdateInput;
+    where: OrderItemWhereUniqueInput;
+  }) => OrderItemPromise;
   updateManyOrderItems: (args: {
     data: OrderItemUpdateManyMutationInput;
     where?: OrderItemWhereInput;
   }) => BatchPayloadPromise;
+  upsertOrderItem: (args: {
+    where: OrderItemWhereUniqueInput;
+    create: OrderItemCreateInput;
+    update: OrderItemUpdateInput;
+  }) => OrderItemPromise;
+  deleteOrderItem: (where: OrderItemWhereUniqueInput) => OrderItemPromise;
   deleteManyOrderItems: (where?: OrderItemWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
@@ -284,7 +306,11 @@ export type CartOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CartItemOrderByInput = "quantity_ASC" | "quantity_DESC";
+export type CartItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "quantity_ASC"
+  | "quantity_DESC";
 
 export type ItemOrderByInput =
   | "id_ASC"
@@ -298,9 +324,17 @@ export type ItemOrderByInput =
   | "description_ASC"
   | "description_DESC"
   | "imageUrl_ASC"
-  | "imageUrl_DESC";
+  | "imageUrl_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
-export type OrderItemOrderByInput = "quantity_ASC" | "quantity_DESC";
+export type OrderItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "quantity_ASC"
+  | "quantity_DESC";
 
 export type OrderOrderByInput =
   | "id_ASC"
@@ -353,25 +387,19 @@ export type UserOrderByInput =
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 export type CartWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+  id: Maybe<Int>;
   sessionId?: Maybe<String>;
 }>;
 
 export interface CartWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   sessionId?: Maybe<String>;
   sessionId_not?: Maybe<String>;
   sessionId_in?: Maybe<String[] | String>;
@@ -412,20 +440,14 @@ export interface CartWhereInput {
 }
 
 export interface UserWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   email?: Maybe<String>;
   email_not?: Maybe<String>;
   email_in?: Maybe<String[] | String>;
@@ -501,6 +523,14 @@ export interface UserWhereInput {
 }
 
 export interface CartItemWhereInput {
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   cart?: Maybe<CartWhereInput>;
   item?: Maybe<ItemWhereInput>;
   quantity?: Maybe<Int>;
@@ -517,20 +547,14 @@ export interface CartItemWhereInput {
 }
 
 export interface ItemWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -595,20 +619,48 @@ export interface ItemWhereInput {
   imageUrl_not_starts_with?: Maybe<String>;
   imageUrl_ends_with?: Maybe<String>;
   imageUrl_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<ItemWhereInput[] | ItemWhereInput>;
   OR?: Maybe<ItemWhereInput[] | ItemWhereInput>;
   NOT?: Maybe<ItemWhereInput[] | ItemWhereInput>;
 }
 
+export type CartItemWhereUniqueInput = AtLeastOne<{
+  id: Maybe<Int>;
+}>;
+
 export type ItemWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+  id: Maybe<Int>;
 }>;
 
 export type OrderWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+  id: Maybe<Int>;
 }>;
 
 export interface OrderItemWhereInput {
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   order?: Maybe<OrderWhereInput>;
   item?: Maybe<ItemWhereInput>;
   quantity?: Maybe<Int>;
@@ -625,20 +677,14 @@ export interface OrderItemWhereInput {
 }
 
 export interface OrderWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   user?: Maybe<UserWhereInput>;
   amount?: Maybe<Int>;
   amount_not?: Maybe<Int>;
@@ -744,12 +790,17 @@ export interface OrderWhereInput {
   NOT?: Maybe<OrderWhereInput[] | OrderWhereInput>;
 }
 
+export type OrderItemWhereUniqueInput = AtLeastOne<{
+  id: Maybe<Int>;
+}>;
+
 export type UserWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+  id: Maybe<Int>;
   email?: Maybe<String>;
 }>;
 
 export interface CartCreateInput {
+  id?: Maybe<Int>;
   sessionId: String;
   user: UserCreateOneWithoutCartsInput;
   items?: Maybe<CartItemCreateManyWithoutCartInput>;
@@ -761,6 +812,7 @@ export interface UserCreateOneWithoutCartsInput {
 }
 
 export interface UserCreateWithoutCartsInput {
+  id?: Maybe<Int>;
   email: String;
   hashPassword: String;
   name: String;
@@ -771,9 +823,11 @@ export interface CartItemCreateManyWithoutCartInput {
   create?: Maybe<
     CartItemCreateWithoutCartInput[] | CartItemCreateWithoutCartInput
   >;
+  connect?: Maybe<CartItemWhereUniqueInput[] | CartItemWhereUniqueInput>;
 }
 
 export interface CartItemCreateWithoutCartInput {
+  id?: Maybe<Int>;
   item: ItemCreateOneInput;
   quantity: Int;
 }
@@ -784,6 +838,7 @@ export interface ItemCreateOneInput {
 }
 
 export interface ItemCreateInput {
+  id?: Maybe<Int>;
   name: String;
   amount: Int;
   category: String;
@@ -820,6 +875,18 @@ export interface CartItemUpdateManyWithoutCartInput {
   create?: Maybe<
     CartItemCreateWithoutCartInput[] | CartItemCreateWithoutCartInput
   >;
+  delete?: Maybe<CartItemWhereUniqueInput[] | CartItemWhereUniqueInput>;
+  connect?: Maybe<CartItemWhereUniqueInput[] | CartItemWhereUniqueInput>;
+  set?: Maybe<CartItemWhereUniqueInput[] | CartItemWhereUniqueInput>;
+  disconnect?: Maybe<CartItemWhereUniqueInput[] | CartItemWhereUniqueInput>;
+  update?: Maybe<
+    | CartItemUpdateWithWhereUniqueWithoutCartInput[]
+    | CartItemUpdateWithWhereUniqueWithoutCartInput
+  >;
+  upsert?: Maybe<
+    | CartItemUpsertWithWhereUniqueWithoutCartInput[]
+    | CartItemUpsertWithWhereUniqueWithoutCartInput
+  >;
   deleteMany?: Maybe<CartItemScalarWhereInput[] | CartItemScalarWhereInput>;
   updateMany?: Maybe<
     | CartItemUpdateManyWithWhereNestedInput[]
@@ -827,7 +894,51 @@ export interface CartItemUpdateManyWithoutCartInput {
   >;
 }
 
+export interface CartItemUpdateWithWhereUniqueWithoutCartInput {
+  where: CartItemWhereUniqueInput;
+  data: CartItemUpdateWithoutCartDataInput;
+}
+
+export interface CartItemUpdateWithoutCartDataInput {
+  item?: Maybe<ItemUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+}
+
+export interface ItemUpdateOneRequiredInput {
+  create?: Maybe<ItemCreateInput>;
+  update?: Maybe<ItemUpdateDataInput>;
+  upsert?: Maybe<ItemUpsertNestedInput>;
+  connect?: Maybe<ItemWhereUniqueInput>;
+}
+
+export interface ItemUpdateDataInput {
+  name?: Maybe<String>;
+  amount?: Maybe<Int>;
+  category?: Maybe<String>;
+  description?: Maybe<String>;
+  imageUrl?: Maybe<String>;
+}
+
+export interface ItemUpsertNestedInput {
+  update: ItemUpdateDataInput;
+  create: ItemCreateInput;
+}
+
+export interface CartItemUpsertWithWhereUniqueWithoutCartInput {
+  where: CartItemWhereUniqueInput;
+  update: CartItemUpdateWithoutCartDataInput;
+  create: CartItemCreateWithoutCartInput;
+}
+
 export interface CartItemScalarWhereInput {
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   quantity?: Maybe<Int>;
   quantity_not?: Maybe<Int>;
   quantity_in?: Maybe<Int[] | Int>;
@@ -855,6 +966,7 @@ export interface CartUpdateManyMutationInput {
 }
 
 export interface CartItemCreateInput {
+  id?: Maybe<Int>;
   cart: CartCreateOneWithoutItemsInput;
   item: ItemCreateOneInput;
   quantity: Int;
@@ -866,8 +978,32 @@ export interface CartCreateOneWithoutItemsInput {
 }
 
 export interface CartCreateWithoutItemsInput {
+  id?: Maybe<Int>;
   sessionId: String;
   user: UserCreateOneWithoutCartsInput;
+}
+
+export interface CartItemUpdateInput {
+  cart?: Maybe<CartUpdateOneRequiredWithoutItemsInput>;
+  item?: Maybe<ItemUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+}
+
+export interface CartUpdateOneRequiredWithoutItemsInput {
+  create?: Maybe<CartCreateWithoutItemsInput>;
+  update?: Maybe<CartUpdateWithoutItemsDataInput>;
+  upsert?: Maybe<CartUpsertWithoutItemsInput>;
+  connect?: Maybe<CartWhereUniqueInput>;
+}
+
+export interface CartUpdateWithoutItemsDataInput {
+  sessionId?: Maybe<String>;
+  user?: Maybe<UserUpdateOneRequiredWithoutCartsInput>;
+}
+
+export interface CartUpsertWithoutItemsInput {
+  update: CartUpdateWithoutItemsDataInput;
+  create: CartCreateWithoutItemsInput;
 }
 
 export interface CartItemUpdateManyMutationInput {
@@ -891,6 +1027,7 @@ export interface ItemUpdateManyMutationInput {
 }
 
 export interface OrderCreateInput {
+  id?: Maybe<Int>;
   user: UserCreateOneInput;
   stripeCharge: Json;
   amount: Int;
@@ -913,6 +1050,7 @@ export interface UserCreateOneInput {
 }
 
 export interface UserCreateInput {
+  id?: Maybe<Int>;
   email: String;
   hashPassword: String;
   name: String;
@@ -926,6 +1064,7 @@ export interface CartCreateManyWithoutUserInput {
 }
 
 export interface CartCreateWithoutUserInput {
+  id?: Maybe<Int>;
   sessionId: String;
   items?: Maybe<CartItemCreateManyWithoutCartInput>;
 }
@@ -934,9 +1073,11 @@ export interface OrderItemCreateManyWithoutOrderInput {
   create?: Maybe<
     OrderItemCreateWithoutOrderInput[] | OrderItemCreateWithoutOrderInput
   >;
+  connect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
 }
 
 export interface OrderItemCreateWithoutOrderInput {
+  id?: Maybe<Int>;
   item: ItemCreateOneInput;
   quantity: Int;
 }
@@ -1010,20 +1151,14 @@ export interface CartUpsertWithWhereUniqueWithoutUserInput {
 }
 
 export interface CartScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   sessionId?: Maybe<String>;
   sessionId_not?: Maybe<String>;
   sessionId_in?: Maybe<String[] | String>;
@@ -1077,6 +1212,18 @@ export interface OrderItemUpdateManyWithoutOrderInput {
   create?: Maybe<
     OrderItemCreateWithoutOrderInput[] | OrderItemCreateWithoutOrderInput
   >;
+  delete?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
+  connect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
+  set?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
+  disconnect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
+  update?: Maybe<
+    | OrderItemUpdateWithWhereUniqueWithoutOrderInput[]
+    | OrderItemUpdateWithWhereUniqueWithoutOrderInput
+  >;
+  upsert?: Maybe<
+    | OrderItemUpsertWithWhereUniqueWithoutOrderInput[]
+    | OrderItemUpsertWithWhereUniqueWithoutOrderInput
+  >;
   deleteMany?: Maybe<OrderItemScalarWhereInput[] | OrderItemScalarWhereInput>;
   updateMany?: Maybe<
     | OrderItemUpdateManyWithWhereNestedInput[]
@@ -1084,7 +1231,31 @@ export interface OrderItemUpdateManyWithoutOrderInput {
   >;
 }
 
+export interface OrderItemUpdateWithWhereUniqueWithoutOrderInput {
+  where: OrderItemWhereUniqueInput;
+  data: OrderItemUpdateWithoutOrderDataInput;
+}
+
+export interface OrderItemUpdateWithoutOrderDataInput {
+  item?: Maybe<ItemUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+}
+
+export interface OrderItemUpsertWithWhereUniqueWithoutOrderInput {
+  where: OrderItemWhereUniqueInput;
+  update: OrderItemUpdateWithoutOrderDataInput;
+  create: OrderItemCreateWithoutOrderInput;
+}
+
 export interface OrderItemScalarWhereInput {
+  id?: Maybe<Int>;
+  id_not?: Maybe<Int>;
+  id_in?: Maybe<Int[] | Int>;
+  id_not_in?: Maybe<Int[] | Int>;
+  id_lt?: Maybe<Int>;
+  id_lte?: Maybe<Int>;
+  id_gt?: Maybe<Int>;
+  id_gte?: Maybe<Int>;
   quantity?: Maybe<Int>;
   quantity_not?: Maybe<Int>;
   quantity_in?: Maybe<Int[] | Int>;
@@ -1123,6 +1294,7 @@ export interface OrderUpdateManyMutationInput {
 }
 
 export interface OrderItemCreateInput {
+  id?: Maybe<Int>;
   order: OrderCreateOneWithoutItemsInput;
   item: ItemCreateOneInput;
   quantity: Int;
@@ -1134,6 +1306,7 @@ export interface OrderCreateOneWithoutItemsInput {
 }
 
 export interface OrderCreateWithoutItemsInput {
+  id?: Maybe<Int>;
   user: UserCreateOneInput;
   stripeCharge: Json;
   amount: Int;
@@ -1147,6 +1320,40 @@ export interface OrderCreateWithoutItemsInput {
   deliveredAt?: Maybe<DateTimeInput>;
   failedAt?: Maybe<DateTimeInput>;
   error?: Maybe<Json>;
+}
+
+export interface OrderItemUpdateInput {
+  order?: Maybe<OrderUpdateOneRequiredWithoutItemsInput>;
+  item?: Maybe<ItemUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+}
+
+export interface OrderUpdateOneRequiredWithoutItemsInput {
+  create?: Maybe<OrderCreateWithoutItemsInput>;
+  update?: Maybe<OrderUpdateWithoutItemsDataInput>;
+  upsert?: Maybe<OrderUpsertWithoutItemsInput>;
+  connect?: Maybe<OrderWhereUniqueInput>;
+}
+
+export interface OrderUpdateWithoutItemsDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  stripeCharge?: Maybe<Json>;
+  amount?: Maybe<Int>;
+  currentLat?: Maybe<Float>;
+  currentLon?: Maybe<Float>;
+  destinationLat?: Maybe<Float>;
+  destinationLon?: Maybe<Float>;
+  verifiedAt?: Maybe<DateTimeInput>;
+  capturedAt?: Maybe<DateTimeInput>;
+  cookedAt?: Maybe<DateTimeInput>;
+  deliveredAt?: Maybe<DateTimeInput>;
+  failedAt?: Maybe<DateTimeInput>;
+  error?: Maybe<Json>;
+}
+
+export interface OrderUpsertWithoutItemsInput {
+  update: OrderUpdateWithoutItemsDataInput;
+  create: OrderCreateWithoutItemsInput;
 }
 
 export interface OrderItemUpdateManyMutationInput {
@@ -1249,14 +1456,14 @@ export interface NodeNode {
 }
 
 export interface Cart {
-  id: ID_Output;
+  id: Int;
   sessionId: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
 export interface CartPromise extends Promise<Cart>, Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   sessionId: () => Promise<String>;
   user: <T = UserPromise>() => T;
   items: <T = FragmentableArray<CartItem>>(args?: {
@@ -1275,7 +1482,7 @@ export interface CartPromise extends Promise<Cart>, Fragmentable {
 export interface CartSubscription
   extends Promise<AsyncIterator<Cart>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   sessionId: () => Promise<AsyncIterator<String>>;
   user: <T = UserSubscription>() => T;
   items: <T = Promise<AsyncIterator<CartItemSubscription>>>(args?: {
@@ -1294,7 +1501,7 @@ export interface CartSubscription
 export interface CartNullablePromise
   extends Promise<Cart | null>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   sessionId: () => Promise<String>;
   user: <T = UserPromise>() => T;
   items: <T = FragmentableArray<CartItem>>(args?: {
@@ -1311,7 +1518,7 @@ export interface CartNullablePromise
 }
 
 export interface User {
-  id: ID_Output;
+  id: Int;
   email: String;
   hashPassword: String;
   name: String;
@@ -1321,7 +1528,7 @@ export interface User {
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   email: () => Promise<String>;
   hashPassword: () => Promise<String>;
   name: () => Promise<String>;
@@ -1342,7 +1549,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
 export interface UserSubscription
   extends Promise<AsyncIterator<User>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   email: () => Promise<AsyncIterator<String>>;
   hashPassword: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -1363,7 +1570,7 @@ export interface UserSubscription
 export interface UserNullablePromise
   extends Promise<User | null>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   email: () => Promise<String>;
   hashPassword: () => Promise<String>;
   name: () => Promise<String>;
@@ -1382,10 +1589,12 @@ export interface UserNullablePromise
 }
 
 export interface CartItem {
+  id: Int;
   quantity: Int;
 }
 
 export interface CartItemPromise extends Promise<CartItem>, Fragmentable {
+  id: () => Promise<Int>;
   cart: <T = CartPromise>() => T;
   item: <T = ItemPromise>() => T;
   quantity: () => Promise<Int>;
@@ -1394,6 +1603,7 @@ export interface CartItemPromise extends Promise<CartItem>, Fragmentable {
 export interface CartItemSubscription
   extends Promise<AsyncIterator<CartItem>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<Int>>;
   cart: <T = CartSubscription>() => T;
   item: <T = ItemSubscription>() => T;
   quantity: () => Promise<AsyncIterator<Int>>;
@@ -1402,49 +1612,58 @@ export interface CartItemSubscription
 export interface CartItemNullablePromise
   extends Promise<CartItem | null>,
     Fragmentable {
+  id: () => Promise<Int>;
   cart: <T = CartPromise>() => T;
   item: <T = ItemPromise>() => T;
   quantity: () => Promise<Int>;
 }
 
 export interface Item {
-  id: ID_Output;
+  id: Int;
   name: String;
   amount: Int;
   category: String;
   description?: String;
   imageUrl?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ItemPromise extends Promise<Item>, Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   name: () => Promise<String>;
   amount: () => Promise<Int>;
   category: () => Promise<String>;
   description: () => Promise<String>;
   imageUrl: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ItemSubscription
   extends Promise<AsyncIterator<Item>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
   amount: () => Promise<AsyncIterator<Int>>;
   category: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   imageUrl: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ItemNullablePromise
   extends Promise<Item | null>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   name: () => Promise<String>;
   amount: () => Promise<Int>;
   category: () => Promise<String>;
   description: () => Promise<String>;
   imageUrl: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CartConnection {
@@ -1635,7 +1854,7 @@ export interface AggregateItemSubscription
 }
 
 export interface Order {
-  id: ID_Output;
+  id: Int;
   stripeCharge: Json;
   amount: Int;
   currentLat?: Float;
@@ -1653,7 +1872,7 @@ export interface Order {
 }
 
 export interface OrderPromise extends Promise<Order>, Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   user: <T = UserPromise>() => T;
   stripeCharge: () => Promise<Json>;
   amount: () => Promise<Int>;
@@ -1683,7 +1902,7 @@ export interface OrderPromise extends Promise<Order>, Fragmentable {
 export interface OrderSubscription
   extends Promise<AsyncIterator<Order>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   user: <T = UserSubscription>() => T;
   stripeCharge: () => Promise<AsyncIterator<Json>>;
   amount: () => Promise<AsyncIterator<Int>>;
@@ -1713,7 +1932,7 @@ export interface OrderSubscription
 export interface OrderNullablePromise
   extends Promise<Order | null>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   user: <T = UserPromise>() => T;
   stripeCharge: () => Promise<Json>;
   amount: () => Promise<Int>;
@@ -1741,10 +1960,12 @@ export interface OrderNullablePromise
 }
 
 export interface OrderItem {
+  id: Int;
   quantity: Int;
 }
 
 export interface OrderItemPromise extends Promise<OrderItem>, Fragmentable {
+  id: () => Promise<Int>;
   order: <T = OrderPromise>() => T;
   item: <T = ItemPromise>() => T;
   quantity: () => Promise<Int>;
@@ -1753,6 +1974,7 @@ export interface OrderItemPromise extends Promise<OrderItem>, Fragmentable {
 export interface OrderItemSubscription
   extends Promise<AsyncIterator<OrderItem>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<Int>>;
   order: <T = OrderSubscription>() => T;
   item: <T = ItemSubscription>() => T;
   quantity: () => Promise<AsyncIterator<Int>>;
@@ -1761,6 +1983,7 @@ export interface OrderItemSubscription
 export interface OrderItemNullablePromise
   extends Promise<OrderItem | null>,
     Fragmentable {
+  id: () => Promise<Int>;
   order: <T = OrderPromise>() => T;
   item: <T = ItemPromise>() => T;
   quantity: () => Promise<Int>;
@@ -1972,7 +2195,7 @@ export interface CartSubscriptionPayloadSubscription
 }
 
 export interface CartPreviousValues {
-  id: ID_Output;
+  id: Int;
   sessionId: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -1981,7 +2204,7 @@ export interface CartPreviousValues {
 export interface CartPreviousValuesPromise
   extends Promise<CartPreviousValues>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   sessionId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -1990,7 +2213,7 @@ export interface CartPreviousValuesPromise
 export interface CartPreviousValuesSubscription
   extends Promise<AsyncIterator<CartPreviousValues>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   sessionId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -2022,18 +2245,21 @@ export interface CartItemSubscriptionPayloadSubscription
 }
 
 export interface CartItemPreviousValues {
+  id: Int;
   quantity: Int;
 }
 
 export interface CartItemPreviousValuesPromise
   extends Promise<CartItemPreviousValues>,
     Fragmentable {
+  id: () => Promise<Int>;
   quantity: () => Promise<Int>;
 }
 
 export interface CartItemPreviousValuesSubscription
   extends Promise<AsyncIterator<CartItemPreviousValues>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<Int>>;
   quantity: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -2063,34 +2289,40 @@ export interface ItemSubscriptionPayloadSubscription
 }
 
 export interface ItemPreviousValues {
-  id: ID_Output;
+  id: Int;
   name: String;
   amount: Int;
   category: String;
   description?: String;
   imageUrl?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ItemPreviousValuesPromise
   extends Promise<ItemPreviousValues>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   name: () => Promise<String>;
   amount: () => Promise<Int>;
   category: () => Promise<String>;
   description: () => Promise<String>;
   imageUrl: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ItemPreviousValuesSubscription
   extends Promise<AsyncIterator<ItemPreviousValues>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
   amount: () => Promise<AsyncIterator<Int>>;
   category: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   imageUrl: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface OrderSubscriptionPayload {
@@ -2119,7 +2351,7 @@ export interface OrderSubscriptionPayloadSubscription
 }
 
 export interface OrderPreviousValues {
-  id: ID_Output;
+  id: Int;
   stripeCharge: Json;
   amount: Int;
   currentLat?: Float;
@@ -2139,7 +2371,7 @@ export interface OrderPreviousValues {
 export interface OrderPreviousValuesPromise
   extends Promise<OrderPreviousValues>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   stripeCharge: () => Promise<Json>;
   amount: () => Promise<Int>;
   currentLat: () => Promise<Float>;
@@ -2159,7 +2391,7 @@ export interface OrderPreviousValuesPromise
 export interface OrderPreviousValuesSubscription
   extends Promise<AsyncIterator<OrderPreviousValues>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   stripeCharge: () => Promise<AsyncIterator<Json>>;
   amount: () => Promise<AsyncIterator<Int>>;
   currentLat: () => Promise<AsyncIterator<Float>>;
@@ -2202,18 +2434,21 @@ export interface OrderItemSubscriptionPayloadSubscription
 }
 
 export interface OrderItemPreviousValues {
+  id: Int;
   quantity: Int;
 }
 
 export interface OrderItemPreviousValuesPromise
   extends Promise<OrderItemPreviousValues>,
     Fragmentable {
+  id: () => Promise<Int>;
   quantity: () => Promise<Int>;
 }
 
 export interface OrderItemPreviousValuesSubscription
   extends Promise<AsyncIterator<OrderItemPreviousValues>>,
     Fragmentable {
+  id: () => Promise<AsyncIterator<Int>>;
   quantity: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -2243,7 +2478,7 @@ export interface UserSubscriptionPayloadSubscription
 }
 
 export interface UserPreviousValues {
-  id: ID_Output;
+  id: Int;
   email: String;
   hashPassword: String;
   name: String;
@@ -2255,7 +2490,7 @@ export interface UserPreviousValues {
 export interface UserPreviousValuesPromise
   extends Promise<UserPreviousValues>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
+  id: () => Promise<Int>;
   email: () => Promise<String>;
   hashPassword: () => Promise<String>;
   name: () => Promise<String>;
@@ -2267,7 +2502,7 @@ export interface UserPreviousValuesPromise
 export interface UserPreviousValuesSubscription
   extends Promise<AsyncIterator<UserPreviousValues>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
+  id: () => Promise<AsyncIterator<Int>>;
   email: () => Promise<AsyncIterator<String>>;
   hashPassword: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -2277,20 +2512,14 @@ export interface UserPreviousValuesSubscription
 }
 
 /*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
-export type ID_Input = string | number;
-export type ID_Output = string;
+export type Int = number;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
-
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-*/
-export type Int = number;
 
 /*
 DateTime scalar input type, allowing Date
@@ -2313,6 +2542,12 @@ export type Json = any;
 The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
 */
 export type Float = number;
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 export type Long = string;
 
@@ -2354,6 +2589,6 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `https://localhost:4466`
+  endpoint: `http://localhost:4466`
 });
 export const prisma = new Prisma();

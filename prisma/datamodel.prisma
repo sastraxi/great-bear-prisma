@@ -1,46 +1,50 @@
 type User {
-  id: ID! @unique
+  id: Int! @id
   email: String! @unique
   hashPassword: String!
   name: String!
   points: Int! @default(value: 0)
   carts: [Cart!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!  
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Cart {
-  id: ID! @unique
+  id: Int! @id
   sessionId: String! @unique
   user: User!
   items: [CartItem!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Item {
-  id: ID! @unique
+  id: Int! @id
   name: String!
   amount: Int!
   category: String!
   description: String
   imageUrl: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CartItem {
+  id: Int! @id
   cart: Cart!
   item: Item!
   quantity: Int!
 }
 
 type OrderItem {
+  id: Int! @id
   order: Order!
   item: Item!
   quantity: Int!
 }
 
 type Order {
-  id: ID! @unique
+  id: Int! @id
   user: User!
   stripeCharge: Json!
   amount: Int!
@@ -50,8 +54,8 @@ type Order {
   destinationLat: Float!
   destinationLon: Float!
 
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   verifiedAt: DateTime
   capturedAt: DateTime
   cookedAt: DateTime
