@@ -1,0 +1,25 @@
+version: '3.6'
+services:
+  dockerhost:
+    image: qoomon/docker-host
+    cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
+    restart: on-failure
+
+  prisma:
+    image: prismagraphql/prisma:1.34
+    ports:
+      - "4466:4466"
+    restart: always
+    depends_on: [ dockerhost ]
+    environment:
+      managementApiSecret: "${PRISMA_SECRET}"
+      port: 4466
+
+      databases:
+        default:
+          connector: postgres
+          host: dockerhost
+          port: 5432
+          user: postgres
+          password: postgres
+          connectionLimit: 15

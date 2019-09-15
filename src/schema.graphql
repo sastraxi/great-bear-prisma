@@ -1,38 +1,78 @@
 type Query {
-  feed: [Post!]!
-  drafts: [Post!]!
-  post(id: ID!): Post
-  me: User
+  currentCart: Cart!
+  orderById(id: Int!): Order!
+  ordersList(orderBy: String): [Order!]!
+  itemsList: [Item!]!
 }
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
-  createDraft(title: String!, content: String!): Post!
-  publish(id: ID!): Post!
-  deletePost(id: ID!): Post!
+  addToCart(itemId: Int!, quantity: Int!): Int!
+  checkout(deliveryLat: Float!, deliveryLon: Float!, stripeToken: String!, amount: Int!): ID!
+  login(email: String!, password: String!): User!
+  signup(email: String!, password: String!): User!  
+  logout: Int
 }
 
 type Subscription {
-  feedSubscription: Post
+  currentCart: Cart!
+  orderById(id: Int!): Order!
+  ordersList(orderBy: String): [Order!]!
 }
 
-type AuthPayload {
-  token: String!
-  user: User!
-}
+############################
+####
 
 type User {
   id: ID!
   email: String!
-  name: String!
-  posts: [Post!]!
 }
 
-type Post {
+type Cart {
   id: ID!
-  published: Boolean!
-  title: String!
-  content: String!
-  author: User!
+  items: [CartItem!]!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  amount: Int!
+  category: String!
+  description: String
+  imageUrl: String
+}
+
+type CartItem {
+  cart: Cart!
+  item: Item!
+  quantity: Int!
+}
+
+type OrderItem {
+  order: Order!
+  item: Item!
+  quantity: Int!
+}
+
+type Order {
+  id: ID!
+  user: User!
+  stripeCharge: Json!
+  amount: Int!
+
+  currentLat: Float
+  currentLon: Float
+  destinationLat: Float!
+  destinationLon: Float!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  verifiedAt: DateTime
+  capturedAt: DateTime
+  cookedAt: DateTime
+  deliveredAt: DateTime
+
+  failedAt: DateTime
+  error: Json
+
+  items: [OrderItem!]!
 }
