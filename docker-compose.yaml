@@ -12,14 +12,15 @@ services:
     restart: always
     depends_on: [ dockerhost ]
     environment:
-      managementApiSecret: "${PRISMA_SECRET}"
-      port: 4466
-
-      databases:
-        default:
-          connector: postgres
-          host: dockerhost
-          port: 5432
-          user: postgres
-          password: postgres
-          connectionLimit: 15
+      PRISMA_CONFIG: |
+        managementApiSecret: ${PRISMA_MANAGEMENT_API_SECRET}
+        port: 4466
+        databases:
+          default:
+            connector: postgres
+            connectionLimit: 15
+            host: dockerhost
+            port: 5432
+            user: ${POSTGRES_USER}
+            password: ${POSTGRES_PASSWORD}
+            database: ${POSTGRES_DATABASE}

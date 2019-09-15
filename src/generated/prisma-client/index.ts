@@ -2354,6 +2354,6 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `https://eu1.prisma.sh/public-woolrider-256/great-bear-prisma/dev`
+  endpoint: `https://localhost:4466`
 });
 export const prisma = new Prisma();
