@@ -1,6 +1,12 @@
 type User {
   id: ID! @unique
   email: String! @unique
+  hashPassword: String!
+  name: String!
+  points: Int! @default(value: 0)
+  carts: [Cart!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!  
 }
 
 type Cart {
