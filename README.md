@@ -12,13 +12,12 @@
 * nice warnings for `@id` and `@createdAt` / `@updatedAt`
 
 ### TODO
-* test out locally with docker (dev mode)
+* add knex to context
+* add auth (passport)
 * try proxying a subscription (client mode)
 
-
-
 ### Implemented
-
+* the start of the addToCart mutation
 
 ### Uniplemented
 

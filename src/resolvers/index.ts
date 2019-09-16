@@ -1,8 +1,8 @@
-import { Query } from './Query';
-import { Subscription } from './Subscription';
-import { auth } from './Mutation/auth';
-import { post } from './Mutation/post';
-import { Post } from './Post';
+import { Query } from './query/Query';
+import { Subscription } from './subscription/Subscription';
+import { auth } from './mutation/auth';
+import { post } from './mutation/post';
+import { Post } from './query/Post';
 
 export default {
   Query,

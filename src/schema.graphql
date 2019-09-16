@@ -1,8 +1,8 @@
 type Query {
   currentCart: Cart!
   orderById(id: Int!): Order!
-  ordersList(orderBy: String): [Order!]!
-  itemsList: [Item!]!
+  orders(orderBy: String): [Order!]!
+  items: [Item!]!
 }
 
 type Mutation {
@@ -16,7 +16,7 @@ type Mutation {
 type Subscription {
   currentCart: Cart!
   orderById(id: Int!): Order!
-  ordersList(orderBy: String): [Order!]!
+  orders(orderBy: String): [Order!]!
 }
 
 ############################
