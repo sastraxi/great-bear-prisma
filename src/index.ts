@@ -10,4 +10,7 @@ const server = new GraphQLServer({
     prisma,
   }),
 })
+
+import { } from './auth/index'
+
 server.start(() => console.log(`Server is running on http://localhost:4000`))

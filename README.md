@@ -17,6 +17,7 @@
 * try proxying a subscription (client mode)
 
 ### Implemented
+
 * the start of the addToCart mutation
 
 ### Uniplemented
@@ -31,3 +32,15 @@
 * can check out, providing a payment card and geo-location
 * can track their order in real time
 * can view a list of their past orders
+
+### How to get started
+
+```bash
+cp .env .env.example # and fill in
+yarn
+service postgresql start
+docker-compose up -d
+dotenv yarn prisma deploy
+```
+
+Then go to http://localhost:4466
