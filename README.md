@@ -7,18 +7,18 @@
   https://www.prisma.io/docs/1.27/datamodel-and-migrations/datamodel-POSTGRES-knum/#renaming-a-type-or-field
 * https://www.prisma.io/tutorials/a-guide-to-common-resolver-patterns-ct08/#scenario:-implementing-relations-with-prisma-client
 
-
 * once we have our `datamodel.prisma` correct, run `dotenv yarn prisma deploy --new`
 * nice warnings for `@id` and `@createdAt` / `@updatedAt`
+* community for prisma 1 seems more or less dead, but prisma 2 is far from complete
 
 ### TODO
-* add knex to context
-* add auth (passport)
-* try proxying a subscription (client mode)
 
-### Implemented
-
-* the start of the addToCart mutation
+* [X] add auth (passport)
+* [ ] re-write database using knex migrations for optimal structure
+* [ ] see if we can write `*cart` methods with built-in prisma library 
+* [ ] add knex to context
+* [ ] figure out how to proxy queries
+* [ ] try proxying a subscription (client mode)
 
 ### Uniplemented
 
