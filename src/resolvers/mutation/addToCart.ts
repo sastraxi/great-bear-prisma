@@ -8,7 +8,7 @@ export interface CartParams {
 export default (
   _parent: any,
   { itemId, quantity }: CartParams,
-  ctx: Context,
+  context: Context,
 ) => {
   if (quantity < 1) throw new Error(
     "addToCart expects an integer >= 1",

@@ -22,3 +22,20 @@ export class AuthError extends Error {
     super('Not authorized')
   }
 }
+
+const ensureCart = ({ prisma, user, sessionId }: Context) =>
+  prisma.upsertCart({
+    where: {
+      
+    }
+  })
+  knex.raw(` 
+    insert into app_public."cart"
+      (session_id, user_id)
+    values
+      (?, ?)
+    on conflict
+    do nothing
+  `, [sessionId, user!.id]);
+
+export default ensureCart;
