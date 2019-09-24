@@ -12,22 +12,20 @@ Unfortunately, Prisma does not help you with security in any idiomatic fashion. 
 * nice warnings for `@id` and `@createdAt` / `@updatedAt`
 * no help with security: https://stackoverflow.com/questions/53683009/row-level-security-using-prisma-and-postgres
   * spoiler alert for the presentation (I answered)
+* community for prisma 1 seems more or less dead, but prisma 2 is far from complete
 
 ---
 ---
 ---
-
-### Prisma Notes
-
 
 ### TODO
-* add knex to context
-* add auth (passport)
-* try proxying a subscription (client mode)
 
-### Implemented
-
-* the start of the addToCart mutation
+* [X] add auth (passport)
+* [ ] re-write database using knex migrations for optimal structure
+* [ ] see if we can write `*cart` methods with built-in prisma library 
+* [ ] add knex to context
+* [ ] figure out how to proxy queries
+* [ ] try proxying a subscription (client mode)
 
 ### Uniplemented
 
